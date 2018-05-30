@@ -22,16 +22,16 @@ responses = {}
 
 ttl_range = range(1, args.ttl+1)
 
-def print_route(rs):
+def print_route(responses):
     table = {}
     last_rtt = 0
     for ttl in ttl_range:
-        if ttl not in rs: continue
+        if ttl not in responses: continue
 
         # r = (src, rtt)
-        ips = ",".join(list(set([ r[0] for r in rs[ttl] ])))
-        avg_rtt = np.average( [ r[1] for r in rs[ttl] ] )
-        std_rtt = np.std( [ r[1] for r in rs[ttl] ] )
+        ips = ",".join(list(set([ r[0] for r in responses[ttl] ])))
+        avg_rtt = np.average( [ r[1] for r in responses[ttl] ] )
+        std_rtt = np.std( [ r[1] for r in responses[ttl] ] )
 
         if avg_rtt-last_rtt<0.0:
             table[ttl] = (avg_rtt, std_rtt, 0, ips)
@@ -42,7 +42,7 @@ def print_route(rs):
     print("ttl\tavg_rtt\tstd_rtt\td_rtt\tips")
     for ttl in ttl_range:
         if ttl not in table:
-            print(ttl, "\t*\t*\t*\t*")
+            print("%d\t*\t*\t*\t*" % ttl)
         else:
             # table[ttl] = (avg_rtt, std_rtt, delta_rtt, ips)
             print("%d\t" % (ttl) + "%.2f\t%.2f\t%.2f\t%s" % table[ttl])
@@ -68,7 +68,8 @@ for ttl in ttl_range:
 
         os.system('clear')
         print("%s, iteracion %d" %(args.host, i+1))
-        print_route( responses )
+        print_route(responses)
+        print(ans)
 
         # Tipo 0: echo-reply
         if ans is not None and ans.type==0: break
