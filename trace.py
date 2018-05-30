@@ -22,7 +22,7 @@ responses = {}
 
 ttl_range = range(1, args.ttl+1)
 
-def print_route(responses):
+def print_route(responses, ttl_reached):
     table = {}
     last_rtt = 0
     for ttl in ttl_range:
@@ -40,7 +40,7 @@ def print_route(responses):
             last_rtt = avg_rtt
     
     print("ttl\tavg_rtt\tstd_rtt\td_rtt\tips")
-    for ttl in ttl_range:
+    for ttl in range(1, ttl_reached + 1):
         if ttl not in table:
             print("%d\t*\t*\t*\t*" % ttl)
         else:
@@ -49,6 +49,9 @@ def print_route(responses):
 
 
 # Recordar que se pueden invertir los siguientes ciclos.
+# ttl = 1
+# max_ttl = args.ttl
+host_reached = False
 for ttl in ttl_range:
     for i in range(args.queries):
         probe = IP(dst=args.host, ttl=ttl) / ICMP()
@@ -68,11 +71,15 @@ for ttl in ttl_range:
 
         os.system('clear')
         print("%s, iteracion %d" %(args.host, i+1))
-        print_route(responses)
-        print(ans)
+        print_route(responses, ttl)
 
         # Tipo 0: echo-reply
-        if ans is not None and ans.type==0: break
+        if ans is not None and ans.type==0:
+            host_reached = True
+            break
+
+    if host_reached: break
+    ttl += 1
 
 # Promedio
 avgs = []
