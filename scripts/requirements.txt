@@ -1,0 +1,6 @@
+Jinja2>=2.8
+geoip2>=2.9
+scapy>=2.4
+numpy>=1.14
+matplotlib>=2.2
+pandas>=0.22

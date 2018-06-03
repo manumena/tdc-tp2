@@ -1,0 +1,20 @@
+# Cosas de latex
+# Si hace falta agregar un pdf, agregar a mano
+*.out
+*.log
+*.aux
+*.pdf
+*.toc
+*.synctex.gz
+
+# Jupyter
+.ipynb_checkpoints
+
+# Python
+__pycache__
+
+# Mapas - Agregar templates a mano
+*.html
+
+# DB de geolocalizacion
+*.mmdb
