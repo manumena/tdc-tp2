@@ -16,8 +16,14 @@ Aplicando el método de Cimbala a la diferencia entre RTTs promedio de cada salt
 
 Este experimento corresponde a la Universidad de Oxford, Inglaterra. Más especificamente, nuestro traceroute es a la dirección \url{www.ox.ac.uk}.
 
-De los 27 hops que observamos hubo 7 que no respondieron Time Exceeded, es casi el 26\% de los host. 3 hosts pertenecen al cluster correspondiente a Argentina, otros 3 a Estados Unidos. 
+De los 27 hops que observamos hubo 7 que no respondieron Time Exceeded, es casi el 26 \% de los host. 3 hosts pertenecen al cluster correspondiente a Argentina, otros 3 a Estados Unidos y el último a Inglaterra.
 
-Al geolocalizar los hosts con nuestros servicios, en el planisferio se observa una ruta con 2 enlaces intercontinentales: el primero entre Argentina y EE.UU., y el siguiente hacia Francia. Además, se produce un salto de distancia intermedia entre Francia y Reino Unido.
+Aqui podemos observar el recorrido trazado en el planisferio.
 
-Al utilizar el método de Cimbala podemos apreciar los dos primeros saltos, los que son efectivamente intercontientales. El mismo también incluye un falso positivo en el cluster de Argentina. Al intentar aplicar el método de forma no iterativa, el salto entre EE.UU. y Europa se pierde como outlier.
+\includegraphics[width=\textwidth]{oxford_mapa.jpg}
+
+Al geolocalizar los hosts con nuestros servicios, en el planisferio se observa una ruta con 2 enlaces intercontinentales. Además nos llamó la atención el hecho de que se realice un salto hacia Estados Unidos existiendo un cable submarino desde Brasil a Portugal. Pensamos que podria deberse a que es el único de Sudamérica hacia Europa y podría estar congestionado, mientras que desde Estados Unidos a Europa existen una cantidad considerable de enlaces submarinos.
+
+\includegraphics[width=\textwidth]{submarine_cable.jpg}
+
+La distribución de RTT entre saltos presenta 3 outliers según el método Cimbala, lo cual no concuerda con la cantidad de saltos transoceánicos que se efectúan, que eran 2. El falso positivo es un salto que se produce dentro del cluster de argentina, la dirección  200.89.165.86
