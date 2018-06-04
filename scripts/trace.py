@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # requerimientos: python3, scapy, numpy
 import sys, os, argparse
@@ -45,7 +45,7 @@ def print_route(responses, ttl_reached):
             print("%d\t*\t*\t*\t*" % ttl)
         else:
             # table[ttl] = (avg_rtt, std_rtt, delta_rtt, ips)
-            print("%d\t" % (ttl) + "%.2f\t%.2f\t%.2f\t%s" % table[ttl])
+            print("%d\t" % (ttl) + "%.2fms\t%.2fms\t%.2fms\t%s" % table[ttl])
 
 
 # Recordar que se pueden invertir los siguientes ciclos.
@@ -56,15 +56,15 @@ for ttl in ttl_range:
     for i in range(args.queries):
         probe = IP(dst=args.host, ttl=ttl) / ICMP()
 
-        t_i = time()
+        t_i = clock()
         # Envia un paquete, y devuelve la respuesta (si la hubo)
         ans = sr1(probe, verbose=False, timeout=args.timeout)
-        t_f = time()
+        t_f = clock()
 
         if ans is not None:
-            rtt = (t_f - t_i)*1000
+            #rtt = (t_f - t_i)*1000
             # Otra manera: el paquete enviado tiene su timestamp en sent_time, y el recibido en time. 
-            #rtt = (ans.time - probe.sent_time)*1000
+            rtt = (ans.time - probe.sent_time)*1000
 
             if ttl not in responses: responses[ttl] = []
             responses[ttl].append((ans.src, rtt))
