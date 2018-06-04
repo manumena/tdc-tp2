@@ -1,0 +1,32 @@
+\section{Metodología}
+
+Se desarrollaron herramientas que permitieron analizar el estado de las rutas seleccionadas.
+
+\subsection{Traceroute}
+
+Esta herramienta nos permite conocer caminos posibles entre nuestro nodo y el nodo destino. La misma se implementó usando mensajes del protocolo ICMP de tipo Echo Request con TTLs fijos, comenzando en 1 en incrementando progresivamente hasta llegar al destino. Como cada salto disminuye en uno el TTL hasta que llega a un host el cual el mismo es 0, este devuelve un ICMP TTL exceeded error. De esta forma la herramienta consigue mensajes de error en cada hop, registrando las IPs de los hosts intermedios. A su vez, podemos analizar el tiempo entre salto y salto comparando el RTT para un cierto TTL con el RTT del TTL anterior.
+
+Esta técnica sufre de anomalías conocidas, como que los paquetes viajen por distintas rutas en cada pedido, por lo que la herramienta toma como parámetro cuántas muestras se toma por TTL. Otra anomalía sufrida por la técnica es que algunos host no responden a este protocolo, por lo que no recibimos información del RTT o la IP del host donde muere el paquete. De todos modos, usamos un timeout para, al no recibir respuesta, asumir que el paquete murió e incrementar el TTL. El algoritmo concluye cuando se recibe un Echo Reply o el TTL excede un valor máximo (30 por defecto).
+
+\subsection{Detección de saltos intercontinentales}
+
+Usando los datos extraídos de la herramienta anterior, se implementó una segunda herramienta para poder identificar cuáles de los saltos corresponden a saltos internacionales. Para llevar a cabo este análisis se partió de la hipótesis que, debido a la gran distancia entre un host y otro, el RTT sería considerablemente más grande que un salto normal. Por ende, la herramienta busca outliers en las muestras de RTT entre salto y salto, y estos son tomados como saltos intercontinentales.
+
+Para la detección de outliers, se partió de la técnica modificada de Thompson propuesta por Cimbala. Esta consiste en calcular en el valor “crítico” de la muestra y considerar como outlier el valor con mayor distancia a la media, siempre que sea mayor a este valor crítico. Este valor se calcula usando la siguiente fórmula:
+
+\[ \tau = \frac{\tau_{\alpha / 2} \cdot (n - 1) }{\sqrt{n} \sqrt{n - 2 + \tau_{\alpha / 2}^2}} \]
+
+Esta técnica se aplica de manera iterativa, quitando el outlier de la muestra y recalculando los valores, hasta que ningún valor sea menor que el valor crítico.
+
+A modo de experimentación, decidimos aplicar este mismo método de forma no-iterativa, es decir, calculando una única vez el tau de Thompson y el promedio, y removiendo todos los que se consideren outliers bajo estos parámetros a la vez.
+
+\subsection{Geolocalización IP}
+
+Para evaluar la efectividad de la técnica usada para conseguir los saltos intercontinentales, se usaron distintos servicios, los cuales devuelven donde se encuentra el host, esta información podemos detectar los saltos intercontinentales.
+
+Utilizamos www.iplocation.net, una herramienta online que dada una dirección IP, es capaz de ubicarla en el mundo comparando entre los resultados de distintos proveedores de geolocalización.
+
+Hicimos geolocalización IP de los saltos obtenidos usando las bases de datos de la empresa MaxMind \footnote{\url{https://www.maxmind.com}}. Esta empresa ofrece de forma gratuita bases con granularidad a nivel ciudad, que es suficiente para detectar saltos intercontinentales.
+
+Los resultados obtenidos los volcamos en un mapa generado con Google Maps. Es importante señalar que, como es esperable que en un traceroute haya muchos nodos agrupados en una misma ciudad, en el mapa los mostramos en un mismo cluster, y por eso al ver el planisferio en cada lugar donde hay más de un hop, aparece un número que indica la cantidad de hops allí detectados.
+

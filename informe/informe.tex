@@ -1,0 +1,38 @@
+\documentclass[10pt, a4paper, spanish]{article}
+\usepackage[paper=a4paper, left=1.5cm, right=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{caratula}
+\usepackage[pdfencoding=auto, colorlinks=true, linkcolor=blue]{hyperref}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{color}
+
+\begin{document}
+
+% CARATULA
+\materia{Teoría de las Comunicaciones}
+\submateria{Primer Cuatrimestre de 2018}
+\fecha{\today}
+\titulo{Trabajo Práctico 2: Rutas en Internet}
+
+\integrante{Mena, Manuel}{313/14}{manuelmena1993@gmail.com}
+\integrante{Tarrío, Ignacio}{363/15}{itarrio@dc.uba.ar}
+\integrante{Szperling, Sebastián Ariel}{763/15}{sszperling@dc.uba.ar}
+
+\maketitle
+
+\tableofcontents
+% compilar 2 veces para actualizar las referencias
+
+\pagebreak
+
+\input{intro.tex}
+
+\input{metodos.tex}
+
+\input{analisis.tex}
+
+
+\end{document}
